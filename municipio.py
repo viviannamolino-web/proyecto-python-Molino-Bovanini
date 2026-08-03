@@ -4,23 +4,25 @@ class Municipio:
         self.nombre=nombre
         self.localidades=[]
 
-    def agregar_localidad (self,localidad):
+    def agregar_localidad(self, localidad):
         self.localidades.append(localidad)
 
-    def obtener_total_localidades(self):
-        return len(self.localidades)
+    def localidades_con_coordenadas(self):
 
-    def obtener_con_coordenadas(self):
-        return [loc for loc in self.localidades if loc.tiene_coordenadas()]
+        return [localidad for localidad in self.localidades if localidad.tiene_coordenadas()]
 
-    def obtener_sin_coordenadas(self):
-        return[loc for loc in self.localidades if not loc.tiene_coordenadas()]
+    def localidades_sin_coordenadas(self):
 
-    def porcentaje_con_coordenadas(self):
-        total=self.obtener_total_localidades()
-        if total==0:
-            return 0.0
-        return (len(self.obtener_con_coordenadas())/total)*100
+        return [localidad for localidad in self.localidades if not localidad.tiene_coordenadas()]
+
+    def busqueda_de_localidad_por_nombre(self, texto_buscado):
+
+        return [localidad for localidad in self.localidades if localidad.coincide_con(texto_buscado)]
+
+    def show(self):
+        print(f"Municipio: {self.nombre} ({len(self.localidades)} localidades)")
+
+
     
 
 

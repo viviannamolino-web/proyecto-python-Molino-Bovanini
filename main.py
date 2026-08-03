@@ -1,10 +1,16 @@
-from lectura_json import CargadorDatos
-from municipio import Municipio
-from localidad import Localidad
+import json
+from Municipio import Municipio
+from Localidad import Localidad
 from Sistema import Sistema
 
-def main(self):
+def main():
 
     sistema = Sistema("zonas_caracas.json")
-    
+    sistema.start()
+
+
+main()
+
+
+
 
