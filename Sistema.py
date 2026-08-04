@@ -51,6 +51,11 @@ class Sistema:
                 municipio.agregar_localidad(localidad)
             self.municipios.append(municipio)
 
+    def mostrar_reporte_carga(self):
+
+        print("\n===Reporte de carga de datos===")
+        for municipio in self.municipios:
+
 
 
     
