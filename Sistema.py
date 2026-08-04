@@ -42,6 +42,15 @@ class Sistema:
         with open(self.ruta_json, encoding="utf-8") as archivo:
             datos=json.load(archivo)
 
+        self.municipios=[]
+        for nombre_municipio, lista_localidades in datos.items():
+            nombre_legible=nombre_municipio.replace("_", " ")
+            municipio=Municipio(nombre_legible)
+            for loc in lista_localidades:
+                localidad=Localidad(loc["localidad"], nombre_legible, loc["latitud"], loc["longitud"])
+                municipio.agregar_localidad(localidad)
+            self.municipios.append(municipio)
+
 
 
     
