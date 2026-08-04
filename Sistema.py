@@ -22,21 +22,26 @@ class Sistema:
 
             elif menu=="2":
                 print("\nFuncionalidad en construccion: consulta de clima por municipio y localidad")
+                print()
 
             elif menu=="3":
                 print("\nFuncionalidad en construccion: busqueda de localidad por nombre")
+                print()
 
             elif menu=="4":
                 print("\nFuncionalidad en construccion: estadisticas de la sesion")
+                print()
 
             elif menu=="5":
                 print("\nFuncionalidad en construccion: historico por periodo")
+                print()
 
             elif menu=="6":
                 print("\nHasta luego.")
 
             else:
-                print("\nOpcion no validad: seleccione una opcion del menu")
+                print("\nOpcion no valida. Seleccione una opcion del menu:")
+                print()
 
     def cargar_datos(self):
         with open(self.ruta_json, encoding="utf-8") as archivo:
