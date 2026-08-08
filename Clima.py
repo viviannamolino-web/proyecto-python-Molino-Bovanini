@@ -41,7 +41,7 @@ class Clima:
 
 
     def descripcion_tiempo(self):
-        return self.codigos_tiempo.get(self.codigo_tiempo, "Descononido")
+        return self.codigos_tiempo.get(self.codigo_tiempo, "Desconocido")
 
 
     def show(self):
@@ -51,4 +51,3 @@ class Clima:
         print(f"Velocidad del viento: {self.viento} km/h")
         print(f"Estado del tiempo: {self.descripcion_tiempo()}")
 
-        
