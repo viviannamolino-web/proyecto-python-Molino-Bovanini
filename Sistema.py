@@ -11,14 +11,14 @@ class Sistema:
     def start(self):
 
         self.cargar_datos()
-        self.mostrar_reporte_carga()
+        self.mostrar_reporte_de_carga()
 
         while True:
 
             menu = input("Bienvenido a MeteoCaracas. Escoja una opcion:\n1. Reporte de carga de datos\n2. Clima por municipio y localidad\n3. Buscar localidad por nombre\n4. Estadisticas de la sesion\n5. Historico por periodo\n6. Salir\n-->")
 
             if menu == "1":
-                self.mostrar_reporte_carga()
+                self.mostrar_reporte_de_carga()
 
             elif menu=="2":
                 print("\nFuncionalidad en construccion: consulta de clima por municipio y localidad")
@@ -55,6 +55,23 @@ class Sistema:
                 localidad=Localidad(loc["localidad"], nombre_legible, loc["latitud"], loc["longitud"])
                 municipio.agregar_localidad(localidad)
             self.municipios.append(municipio)
+
+    def mostrar_reporte_de_carga(self):
+        print("\n==Reporte de Carga de Datos==")
+
+        for municipio in self.municipios:
+            total = len(municipio.localidades())
+            con_coords = len(municipio.localidades_con_coordendas())
+            sin_coords = len(municipio.localidades_sin_coordenadas())
+            porcentaje = (con_coords / total * 180) if total > 0 else 0
+
+            print(f"\nMunicipio: {municipio.nombre}")
+            print(f"Localidades cargadas: {total}")
+            print(f"Con coordenadas geograficas: {con_coords}")
+            print(f"Sin coordenadas geograficas: {sin_coords}")
+            print(f"Porcentaje con coordenadas: {porcentaje:.2f}%")
+
+
 
 
 
