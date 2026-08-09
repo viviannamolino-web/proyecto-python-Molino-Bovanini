@@ -91,6 +91,9 @@ class Sistema:
             print("Opcion no valida")
             return
 
+        municipio=self.municipios[int(opcion)-1]
+        localidades_validas=municipio.localidades_con_coordenadas()
+
         if not localidades_validas:
             print("Este municipio no tiene localidades con coordenadas registradas.")
             return
@@ -104,7 +107,158 @@ class Sistema:
             print("Opcion no valida.")
             return
 
-        localidad=localidades_vvalidas[int(opcion_localidad)-1]
+        localidad=localidades_validas[int(opcion_localidad)-1]
+        self.mostrar_clima_localidad(localidad)
+
+    def buscar_por_nombre(self):
+
+        texto=input("Ingrese el nombre (o parte del nombre) de la localidad a buscar: ")
+        coincidencias=[]
+        for municipio in self.municipios:
+            for localidad in municipio.buscar_localidad_por_nombre(texto):
+                if localidad.tiene_coordenadas():
+                    coincidencias.append(localidad)
+
+        if not coincidencias:
+            print("No se encontraron localidades con ese nombre que tengan coordenadas registradas.")
+            return
+
+        opcion=input("\nCoincidencias encontradas:")
+        for indice,localidad in enumerate(coincidencias,start=1):
+            print(f"{indice}.{localidad.nombre} ({localidad.nombre_municipio})")
+
+        opcion=input("Seleccione el numero de la localidad:")
+        if not opcion.isdigit() or not (1<=(opcion)<=len(coincidencias)):
+            print("Opcion no valida.")
+            return
+
+        localidad=coincidencias[int(opcion)-1]
+        self.mostrar_clima_localidad(localidad)
+
+    def mostrar_clima_localidad(self,localidad):
+
+        clima=consultar_clima_actual(localidad.latitud,localidad.longitud)
+
+        if clima is None:
+            return
+
+        print(f"Muniipio: {localidad.nombre_municipio}")
+        print(f"Localidad: {localidad.nombre}")
+        print(f"Coordenadas: ({localidad.latitud},{localidad.longiud})")
+        clima.show()
+
+        self.consultas_realizadas.append(RegistroConsulta(localidad,clima))
+
+    def mostrar_estadisticas(self):
+
+        while True:
+            opcion=input(
+                "\n=== Estadisticas y Reportes===\n"
+                "1. Ranking de temperatura (localidad mas calida y mas fria)\n"
+                "2. Cobertura geogafica (localidades sin coordenadas)\n"
+                "3. Promedio general de temperatura de lasesion\n"
+                "4. Volver al menu principal\n"
+                "-->"
+            )
+
+            if opcion=="1":
+                self.mostrar_ranking_temperatura()
+
+            elif opcion=="2":
+                self.mostrar_cobertura_geografica()
+
+            elif opcion=="3":
+                self.mostrar_promedio_general()
+
+            elif opcion=="4":
+                break
+
+            else:
+                print("Opcion no valida.")
+
+    def mostrar_ranking_temperatura(self):
+        if not self.consultas_realizadas:
+            print("Aun no se ha consultado el clima de ninguna localidad en esta sesion.")
+            return
+
+        mas_calida=self.consultas_realizadas[0]
+        mas_fria=self.consultas_realizadas[0]
+
+        for registro in self.consultas_realizada:
+            if registro.clima.temperatura>mas_calida.clima.temperatur:
+                mas_calida=registro
+            if registro.clima.temperatura<mas_fria.clima.temperatura:
+                mas_fria=registro
+
+        print("\n--Ranking de Temperatura (segun consultas dela sesion)--")
+        print(
+            f"Localidad mas calida: {mas_calida.localidad.nombre} "
+            f"({mas_calida.localidad.nombre_municipio}) - {mas_calida.clima.temperatura} C"
+        )
+
+        print(
+                    f"Localidad mas fria: {mas_fria.localidad.nombre} "
+                    f"({mas_fria.localidad.nombre_municipio}) - {mas_fria.clima.temperatura} C"
+                )
+
+    def mostrar_cobertura_geografica(self):
+        print("\n--Cobertura Geografica: localidades sin coordenadas --")
+        for municipio in self.municipios:
+            sin_coords=municipio.localidades_sin_coordenadas()
+            print(f"\nMunicipio: {municipio.nombre} ({len{sin_coords}} sin coordenadas)")
+            for localidad in sin_coords:
+                print(f" - {localidad.nombre}")
+
+    def mostrar_promedio_general(self):
+        if not self.cosultas_realizadas:
+            print("Aun no se ha consultados el clima de ninguna localidad en esta sesion.")
+            return
+
+        suma_temperaturas=0
+        for registro in self.consultas_realizadas:
+            suma_temperaturas+=registro.clima.temperatura
+
+        promedio=suma_temperaturas/len(self.consultas_realizadas)
+        print(
+            f"\nPromedio de temperatura de las {len(self.consultas_realizadas)} "
+            f"\nlocalidades consultadas: {promedio:.2f} C"
+        )
+
+    def fecha_valida(self,texto):
+        try:
+            datetime.strptime(texto,"%Y-%m-%d")
+            return True
+        except ValueError:
+            return False
+
+    def consultar_historico(self):
+        print("\nMunicipios disponibles:")
+        for indice,municipio in enumerate(self.municipios,start=1):
+            print(f"{indice}.{municipio.nombre}")
+
+        opcion=input("Seleccione el numero del municipio: ")
+        if not opcion.isdigit() or not (1<=int(opcion)<=len(self.municipios)):
+            print("Opcion no valida")
+            return
+        
+        municipio=self.municipios[int(opcion)-1]
+        localidades_validas=municipio.localidades_con_coordenadas()
+
+        if not localidades_validas:
+            print("Este municipio no tiene localidades con coordenadas registradas.")
+            return
+
+        print(f"\nLocalidades de {municipio.nombre} con coordenadas:")
+        for indice,localidad in enumerate(localidades_validas,start=1):
+            print(f"{indice}.{localidad.nombre}")
+
+        opcion_localidad=input("Seleccione el numero de la localidad: ")
+        if not opcion_localidad.isdigit() or not (1<=int(opcion_localidad)<=len(localidades_validas)):
+            print("Opcion no valida.")
+            return
+
+        localidad=localidades_validas[int(opcion_localidad)-1]
+
         fecha_inicio=input("Ingrese la fecha de inicio (AAAA-MM-DD): ")
         fecha_fin=input("Ingrese la fecha de fin (AAAA-MM-DD): ")
 
