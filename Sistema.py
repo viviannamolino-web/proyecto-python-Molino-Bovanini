@@ -1,7 +1,11 @@
 import json
 from Localidad import Localidad
 from Municipio import Municipio
-
+from datetime import datetime
+from ClimaAPI import ClimaAPI
+from RegistroConsulta import RegistroConsulta
+from HistoricoAPI import HistoricoAPI
+from GraficoHistorico import GraficoHistorico
 
 class Sistema:
     def __init__(self, ruta_json):
@@ -21,19 +25,19 @@ class Sistema:
                 self.mostrar_reporte_de_carga()
 
             elif menu=="2":
-                print("\nFuncionalidad en construccion: consulta de clima por municipio y localidad")
+                self.consultar_por_municipio()
                 print()
 
             elif menu=="3":
-                print("\nFuncionalidad en construccion: busqueda de localidad por nombre")
+                self.buscar_por_nombre()
                 print()
 
             elif menu=="4":
-                print("\nFuncionalidad en construccion: estadisticas de la sesion")
+                self.mostrar_estadisticas()
                 print()
 
             elif menu=="5":
-                print("\nFuncionalidad en construccion: historico por periodo")
+                self.consultar_historico()
                 print()
 
             elif menu=="6":
@@ -76,6 +80,19 @@ class Sistema:
             print(f"Con coordenadas geograficas: {con_coords}")
             print(f"Sin coordenadas geograficas: {sin_coords}")
             print(f"Porcentaje con coordenadas: {porcentaje:.2f}%")
+
+    def consultar_por_municipio(self):
+        print("\nMunicipios disponibles:")
+        for indice,municipio in enumerate(self.municipios, start=1):
+            print(f"{indice}.{municipio.nombre}")
+
+        opcion=input("Seleccione el numero del municipio: ")
+        if not opcion.isdigit() or not (1<=int(opcion)<=len(self.municipios)):
+            print("Opcion no valida")
+            return
+
+        if not localidades_validas:
+            
 
 
 

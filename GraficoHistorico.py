@@ -1,10 +1,10 @@
 import matplotlib.pyplot as plt
 
-def graficar_evolucion_anual(registros_anuales):
+def graficar_evolucion_anual(registros_mensuales):
 
     datos_por_anio = {}
 
-    for registro in registros_anuales:
+    for registro in registros_mensuales:
         if registro.anio not in datos_por_anio:
             datos_por_anio[registro.anio] = {
                 "temperaturas": [],
