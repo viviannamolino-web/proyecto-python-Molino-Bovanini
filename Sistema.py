@@ -2,15 +2,16 @@ import json
 from Localidad import Localidad
 from Municipio import Municipio
 from datetime import datetime
-from ClimaAPI import ClimaAPI
+from ClimaAPI import consultar_clima_actual
 from RegistroConsulta import RegistroConsulta
-from HistoricoAPI import HistoricoAPI
-from GraficoHistorico import GraficoHistorico
+from HistoricoAPI import consultar_historico
+from GraficoHistorico import graficar_evolucion_anual
 
 class Sistema:
     def __init__(self, ruta_json):
         self.ruta_json = ruta_json
         self.municipios = []
+        self.consultas_realizadas = []
 
     def start(self):
 
@@ -62,9 +63,6 @@ class Sistema:
             self.municipios.append(municipio)
 
 
-    def mostrar_reporte_carga(self):
-
-        print("\n===Reporte de carga de datos===")
 
     def mostrar_reporte_de_carga(self):
         print("\n==Reporte de Carga de Datos==")
@@ -91,7 +89,65 @@ class Sistema:
             print("Opcion no valida")
             return
 
+        municipio = self.municipios[int(opcion) - 1]
+        localidades_validas = municipio.localidades_con_coordenadas()
+
         if not localidades_validas:
+            print("Este municipio no tiene localidades con coordenadas registradas.")
+            return
+
+        print(f"Localidades de {municipio.nombre} con coordenadas")
+        for indice, localidad in enumerate(localidades_validas, start=1):
+            print(f"{indice}. {localidad.nombre}")
+
+        opcion_localidad = input("Seleccione el numero de la localidad: ")
+        if not opcion_localidad.isdigit() or not (1 <= int(opcion_localidad) <= len(localidades_validas)):
+            print("Opcion no valida.")
+            return
+
+        localidad = localidades_validas[int(opcion_localidad) - 1]
+        self.mostrar_clima_localidad(localidad)
+
+    def mostrar_clima_localidad(self, localidad):
+        clima = consultar_clima_actual(localidad.latitud, localidad.longitud)
+        if clima is None:
+            return
+
+        print(f"\nMunicipio: {localidad.nombre_municipio}")
+        print(f"Localidad: {localidad.nombre}")
+        print(f"Coordenadas: ({localidad.latitud}, {localidad.longitud})")
+        clima.show()
+
+        self.consultas_realizadas.append(RegistroConsulta(localidad, clima))
+
+    def buscar_por_nombre(self):
+        texto = input("Ingrese el nombre (o parte del nombre) de la localidad a buscar: ")
+
+        coincidencias = []
+        for municipio in self.municipios:
+            for localidad in municipio.buscar_localidad_por_nombre(texto):
+                if localidad.tiene_coordenadas():
+                    coincidencias.append(localidad)
+
+        if not coincidencias:
+            print("No se encontraron las localidades con ese nombre que tengan coordenandas registradas.")
+            return
+
+        print("\nCoincidencias encontradas:")
+        for indice, localidad in enumerate(coincidencias, start = 1):
+            print(f"{indice}. {localidad.nombre} ({localidad.nombre_municipio})")
+
+        opcion = input("Seleccione el numero de la localidad: ")
+        if not opcion.isdigit() or not (1 <= int(opcion) <= len(coincidencias)):
+            print("Opcion no valida.")
+            return
+
+        localidad  = coincidencias[int(opcion) - 1]
+        self.mostrar_clima_localidad(localidad)
+
+        
+
+
             
 
 
