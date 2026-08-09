@@ -38,6 +38,7 @@ class Sistema:
 
             elif menu=="6":
                 print("\nHasta luego.")
+                break
 
             else:
                 print("\nOpcion no valida. Seleccione una opcion del menu:")
@@ -56,20 +57,19 @@ class Sistema:
                 municipio.agregar_localidad(localidad)
             self.municipios.append(municipio)
 
-<<<<<<< HEAD
+
     def mostrar_reporte_carga(self):
 
         print("\n===Reporte de carga de datos===")
-        for municipio in self.municipios:
-=======
+
     def mostrar_reporte_de_carga(self):
         print("\n==Reporte de Carga de Datos==")
 
         for municipio in self.municipios:
-            total = len(municipio.localidades())
-            con_coords = len(municipio.localidades_con_coordendas())
+            total = len(municipio.localidades)
+            con_coords = len(municipio.localidades_con_coordenadas())
             sin_coords = len(municipio.localidades_sin_coordenadas())
-            porcentaje = (con_coords / total * 180) if total > 0 else 0
+            porcentaje = (con_coords / total * 100) if total > 0 else 0
 
             print(f"\nMunicipio: {municipio.nombre}")
             print(f"Localidades cargadas: {total}")
@@ -78,7 +78,7 @@ class Sistema:
             print(f"Porcentaje con coordenadas: {porcentaje:.2f}%")
 
 
->>>>>>> 72a7bdc56c2614850b04e107a8f648a8b0add180
+
 
 
 
