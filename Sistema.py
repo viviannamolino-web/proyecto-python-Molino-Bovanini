@@ -323,16 +323,11 @@ class Sistema:
         print(f"Velocidad del viento promedio: {suma_viento / cantidad:.2f} km/h")
 
     def mostrar_anios_extremos(self, registros_mensuales):
-<<<<<<< HEAD
-        """Agrupa los registros mensuales por año y determina el año mas caluroso, el mas
-fresco, el de mayor precipitacion acumulada y el de mayor humedad relativa.
-Parametros:
-registros_mensuales (list): lista de objetos RegistroMensual del periodo consultado."""
-=======
+
         """agrupa los registros mensuales por año y determina el año mas caluroso, fresco, humedo y con mayor precipitacion
         parametros:
         lista de objetos RegistroMensual del periodo consultado"""
->>>>>>> 5f029cc04b4426caa0ed0d2d56f183ec66b6ae95
+
 
         datos_por_anio = {}
         for registro in registros_mensuales:
