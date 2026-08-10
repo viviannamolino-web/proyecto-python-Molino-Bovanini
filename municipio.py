@@ -15,7 +15,7 @@ class Municipio:
 
         return [localidad for localidad in self.localidades if not localidad.tiene_coordenadas()]
 
-    def busqueda_de_localidad_por_nombre(self, texto_busqueda):
+    def buscar_localidad_por_nombre(self, texto_busqueda):
 
         return[localidad for localidad in self.localidades if localidad.coincide_con(texto_busqueda)]
 

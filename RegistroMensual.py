@@ -13,6 +13,11 @@ class RegistroMensual:
         self.viento=viento
 
     def nombre_mes(self):
+        
+        return self.NOMBRES_MES.get(self.mes, str(self.mes))
+
+    def show(self):
+
         print(f"{self.nombre_mes()} {self.anio}")
         print(f"Temperatura promedio: {self.temperatura:.2f} C")
         print(f"Humedad relativa promedio: {self.humedad:2f}%")

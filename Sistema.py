@@ -2,15 +2,16 @@ import json
 from Localidad import Localidad
 from Municipio import Municipio
 from datetime import datetime
-from ClimaAPI import ClimaAPI
+from ClimaAPI import consultar_clima_actual
 from RegistroConsulta import RegistroConsulta
-from HistoricoAPI import HistoricoAPI
-from GraficoHistorico import GraficoHistorico
+from HistoricoAPI import consultar_historico
+from GraficoHistorico import graficar_evolucion_anual
 
 class Sistema:
     def __init__(self, ruta_json):
         self.ruta_json = ruta_json
         self.municipios = []
+        self.consultas_realizadas = []
 
     def start(self):
 
@@ -61,10 +62,6 @@ class Sistema:
                 municipio.agregar_localidad(localidad)
             self.municipios.append(municipio)
 
-
-    def mostrar_reporte_carga(self):
-
-        print("\n===Reporte de carga de datos===")
 
     def mostrar_reporte_de_carga(self):
         print("\n==Reporte de Carga de Datos==")
@@ -123,12 +120,12 @@ class Sistema:
             print("No se encontraron localidades con ese nombre que tengan coordenadas registradas.")
             return
 
-        opcion=input("\nCoincidencias encontradas:")
+        opcion=print("\nCoincidencias encontradas:")
         for indice,localidad in enumerate(coincidencias,start=1):
             print(f"{indice}.{localidad.nombre} ({localidad.nombre_municipio})")
 
         opcion=input("Seleccione el numero de la localidad:")
-        if not opcion.isdigit() or not (1<=(opcion)<=len(coincidencias)):
+        if not opcion.isdigit() or not (1<=(int(opcion))<=len(coincidencias)):
             print("Opcion no valida.")
             return
 
@@ -142,9 +139,9 @@ class Sistema:
         if clima is None:
             return
 
-        print(f"Muniipio: {localidad.nombre_municipio}")
+        print(f"Municipio: {localidad.nombre_municipio}")
         print(f"Localidad: {localidad.nombre}")
-        print(f"Coordenadas: ({localidad.latitud},{localidad.longiud})")
+        print(f"Coordenadas: ({localidad.latitud},{localidad.longitud})")
         clima.show()
 
         self.consultas_realizadas.append(RegistroConsulta(localidad,clima))
@@ -184,8 +181,8 @@ class Sistema:
         mas_calida=self.consultas_realizadas[0]
         mas_fria=self.consultas_realizadas[0]
 
-        for registro in self.consultas_realizada:
-            if registro.clima.temperatura>mas_calida.clima.temperatur:
+        for registro in self.consultas_realizadas:
+            if registro.clima.temperatura>mas_calida.clima.temperatura:
                 mas_calida=registro
             if registro.clima.temperatura<mas_fria.clima.temperatura:
                 mas_fria=registro
@@ -205,12 +202,12 @@ class Sistema:
         print("\n--Cobertura Geografica: localidades sin coordenadas --")
         for municipio in self.municipios:
             sin_coords=municipio.localidades_sin_coordenadas()
-            print(f"\nMunicipio: {municipio.nombre} ({len{sin_coords}} sin coordenadas)")
+            print(f"\nMunicipio: {municipio.nombre} ({len(sin_coords)} sin coordenadas)")
             for localidad in sin_coords:
                 print(f" - {localidad.nombre}")
 
     def mostrar_promedio_general(self):
-        if not self.cosultas_realizadas:
+        if not self.consultas_realizadas:
             print("Aun no se ha consultados el clima de ninguna localidad en esta sesion.")
             return
 
@@ -262,11 +259,100 @@ class Sistema:
         fecha_inicio=input("Ingrese la fecha de inicio (AAAA-MM-DD): ")
         fecha_fin=input("Ingrese la fecha de fin (AAAA-MM-DD): ")
 
-        if not fecha_valida(fecha_inicio) or not self.fecha_valida(fecha_fin):
+        if not self.fecha_valida(fecha_inicio) or not self.fecha_valida(fecha_fin):
             print("Las fechas deben tener el formato AAAA-MM-DD.")
             return
 
-        registros_mensuales=self.consultar_historico(localidad.latitud,localidad.longitud,fecha_inicio,fecha_fin)
+        registros_mensuales=consultar_historico(localidad.latitud,localidad.longitud,fecha_inicio,fecha_fin)
+
+        if not registros_mensuales:
+            print(f"No se pudo obtener el historico para ese periodo.")
+            return
+
+        print(f"\n==Historico de {localidad.nombre} ({municipio.nombre})===")
+        for registro in registros_mensuales:
+            registro.show()
+
+        self.mostrar_promedios_historico(registros_mensuales)
+        self.mostrar_anios_extremos(registros_mensuales)
+        graficar_evolucion_anual(registros_mensuales)
+
+    def mostrar_promedios_historico(self, registros_mensuales):
+        suma_temp = 0
+        suma_humedad = 0
+        suma_viento = 0
+        suma_precipitacion = 0
+
+        for registro in registros_mensuales:
+            suma_temp += registro.temperatura
+            suma_humedad += registro.humedad
+            suma_viento += registro.viento
+            suma_precipitacion += registro.precipitacion
+
+        cantidad = len(registros_mensuales)
+
+        print("\n==Promedios del periodo consultado===")
+        print(f"Temperatura promedio: {suma_temp / cantidad:.2f} C")
+        print(f"Humedad relativa promedio: {suma_humedad / cantidad:.2f}%")
+        print(f"Precipitacion promedio mensual: {suma_precipitacion / cantidad:.2f} mm")
+        print(f"Velocidad del viento promedio: {suma_viento / cantidad:.2f} km/h")
+
+    def mostrar_anios_extremos(self, registros_mensuales):
+
+        datos_por_anio = {}
+        for registro in registros_mensuales:
+            if registro.anio not in datos_por_anio:
+                datos_por_anio[registro.anio] = []
+            datos_por_anio[registro.anio].append(registro)
+
+        anio_mas_caluroso = None
+        temp_mas_alta = None
+        anio_mas_fresco = None
+        temp_mas_baja = None
+        anio_mas_lluvioso = None
+        precipitacion_mas_alta = None
+        anio_mas_humedo = None
+        humedad_mas_alta = None
+
+        for anio in datos_por_anio:
+            registros_del_anio = datos_por_anio[anio]
+
+            suma_temp = 0
+            suma_humedad = 0
+            suma_precipitacion = 0 
+
+            for registro in registros_del_anio:
+                suma_temp += registro.temperatura
+                suma_humedad += registro.humedad
+                suma_precipitacion += registro.precipitacion
+
+            promedio_temp_anio = suma_temp / len(registros_del_anio)
+            promedio_humedad_anio = suma_humedad / len(registros_del_anio)
+
+            if temp_mas_alta is None or promedio_temp_anio > temp_mas_alta:
+                temp_mas_alta = promedio_temp_anio
+                anio_mas_caluroso = anio
+
+            if temp_mas_baja is None or promedio_temp_anio < temp_mas_baja:
+                temp_mas_baja = promedio_temp_anio
+                anio_mas_fresco = anio
+
+            if precipitacion_mas_alta is None or suma_precipitacion > precipitacion_mas_alta:
+                precipitacion_mas_alta = suma_precipitacion
+                anio_mas_lluvioso = anio
+
+            if humedad_mas_alta is None or promedio_humedad_anio > humedad_mas_alta:
+                humedad_mas_alta = promedio_humedad_anio
+                anio_mas_humedo = anio
+
+        print("\n===Años destacados del periodo===")
+        print(f"Año mas caluroso: {anio_mas_caluroso} ({temp_mas_alta:.2f} C promedio)")
+        print(f"Año mas fresco: {anio_mas_fresco} ({temp_mas_baja:.2f} C promedio)")
+        print(f"Año con mayor precipitacion: {anio_mas_lluvioso} ({precipitacion_mas_alta:.2f} mm acumulados)")
+        print(f"Año con mayor humedad: {anio_mas_humedo} ({humedad_mas_alta:.2f}% promedio)")
+
+
+
       
 
 
