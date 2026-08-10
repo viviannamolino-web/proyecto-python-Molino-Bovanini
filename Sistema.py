@@ -271,6 +271,7 @@ class Sistema:
 
         print(f"\n==Historico de {localidad.nombre} ({municipio.nombre})===")
         for registro in registros_mensuales:
+            print()
             registro.show()
 
         self.mostrar_promedios_historico(registros_mensuales)
