@@ -27,6 +27,7 @@ class Sistema:
 
             if menu == "1":
                 self.mostrar_reporte_de_carga()
+                print()
 
             elif menu=="2":
                 self.consultar_por_municipio()
