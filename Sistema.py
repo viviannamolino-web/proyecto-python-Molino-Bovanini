@@ -8,8 +8,7 @@ from HistoricoAPI import consultar_historico
 from GraficoHistorico import graficar_evolucion_anual
 
 class Sistema:
-    """Controla el flujo principal de MeteoCaracas: carga de datos, menu, clima, estadisticas e
-historicos"""
+    """Controla el flujo principal de MeteoCaracas: carga de datos, menu, clima, estadisticas e historicos"""
     def __init__(self, ruta_json):
         """Inicializa el sistema. Parametros: ruta_json (str): ruta del archivo JSON con la informacion de municipios y localidades."""
 
@@ -18,8 +17,7 @@ historicos"""
         self.consultas_realizadas = []
 
     def start(self):
-        """Punto de entrada: carga los datos, muestra el reporte inicial y despliega el menu
-principal."""
+        """Punto de entrada: carga los datos, muestra el reporte inicial y despliega el menu principal."""
         self.cargar_datos()
         self.mostrar_reporte_de_carga()
 
@@ -29,6 +27,7 @@ principal."""
 
             if menu == "1":
                 self.mostrar_reporte_de_carga()
+                print()
 
             elif menu=="2":
                 self.consultar_por_municipio()
@@ -55,8 +54,7 @@ principal."""
                 print()
 
     def cargar_datos(self):
-        """Lee el archivo JSON de municipios y localidades, y construye la lista de objetos Municipio,
-cada uno con su lista de objetos Localidad."""
+        """Lee el archivo JSON de municipios y localidades, y construye la lista de objetos Municipio, cada uno con su lista de objetos Localidad."""
         with open(self.ruta_json, encoding="utf-8") as archivo:
             datos=json.load(archivo)
 
@@ -71,8 +69,7 @@ cada uno con su lista de objetos Localidad."""
 
 
     def mostrar_reporte_de_carga(self):
-        """Imprime en pantalla, por cada municipio, la cantidad de localidades cargadas, cuantas tienen
-coordenadas geograficas, cuantas no, y el porcentaje de localidades con coordenadas."""
+        """Imprime en pantalla, por cada municipio, la cantidad de localidades cargadas, cuantas tienen coordenadas geograficas, cuantas no, y el porcentaje de localidades con coordenadas."""
         print("\n==Reporte de Carga de Datos==")
 
         for municipio in self.municipios:
@@ -88,8 +85,7 @@ coordenadas geograficas, cuantas no, y el porcentaje de localidades con coordena
             print(f"Porcentaje con coordenadas: {porcentaje:.2f}%")
 
     def consultar_por_municipio(self):
-        """Permite al usuario elegir un municipio y luego una de sus localidades con coordenadas
-validas, y muestra el clima actual de la localidad seleccionada."""
+        """Permite al usuario elegir un municipio y luego una de sus localidades con coordenadas validas, y muestra el clima actual de la localidad seleccionada."""
         print("\nMunicipios disponibles:")
         for indice,municipio in enumerate(self.municipios, start=1):
             print(f"{indice}.{municipio.nombre}")
@@ -119,8 +115,7 @@ validas, y muestra el clima actual de la localidad seleccionada."""
         self.mostrar_clima_localidad(localidad)
 
     def buscar_por_nombre(self):
-        """Permite al usuario buscar localidades por nombre (o parte del nombre) en todos los
-municipios, y muestra el clima actual de la localidad que seleccione."""
+        """Permite al usuario buscar localidades por nombre (o parte del nombre) en todos los municipios, y muestra el clima actual de la localidad que seleccione."""
 
         texto=input("Ingrese el nombre (o parte del nombre) de la localidad a buscar: ")
         coincidencias=[]
@@ -146,9 +141,7 @@ municipios, y muestra el clima actual de la localidad que seleccione."""
         self.mostrar_clima_localidad(localidad)
 
     def mostrar_clima_localidad(self,localidad):
-        """Consulta el clima actual de una localidad (via ClimaAPI) y lo muestra en pantalla
-junto con el municipio, la localidad y sus coordenadas. Guarda la consulta en el
-historial de la sesion. Parametros: localidad (Localidad): localidad de la cual se quiere consultar el clima."""
+        """Consulta el clima actual de una localidad (via ClimaAPI) y lo muestra en pantalla junto con el municipio, la localidad y sus coordenadas. Guarda la consulta en el historial de la sesion. Parametros: localidad (Localidad): localidad de la cual se quiere consultar el clima."""
 
         clima=consultar_clima_actual(localidad.latitud,localidad.longitud)
 
@@ -163,8 +156,7 @@ historial de la sesion. Parametros: localidad (Localidad): localidad de la cual 
         self.consultas_realizadas.append(RegistroConsulta(localidad,clima))
 
     def mostrar_estadisticas(self):
-        """Muestra el submenu de estadisticas y reportes: ranking, cobertura geografica y promedio
-general."""
+        """Muestra el submenu de estadisticas y reportes: ranking, cobertura geografica y promedio general."""
 
         while True:
             opcion=input(
@@ -192,8 +184,7 @@ general."""
                 print("Opcion no valida.")
 
     def mostrar_ranking_temperatura(self):
-        """Muestra la localidad mas calida y la mas fria segun las consultas realizadas en la
-sesion."""
+        """Muestra la localidad mas calida y la mas fria segun las consultas realizadas en la sesion."""
         if not self.consultas_realizadas:
             print("Aun no se ha consultado el clima de ninguna localidad en esta sesion.")
             return
@@ -219,18 +210,17 @@ sesion."""
                 )
 
     def mostrar_cobertura_geografica(self):
-       """Muestra, agrupadas por municipio, las localidades del archivo que no tienen coordenadas
-registradas."""
-    print("\n--Cobertura Geografica: localidades sin coordenadas --")
-    for municipio in self.municipios:
-        sin_coords=municipio.localidades_sin_coordenadas()
-        print(f"\nMunicipio: {municipio.nombre} ({len(sin_coords)} sin coordenadas)")
-        for localidad in sin_coords:
-            print(f" - {localidad.nombre}")
+        """Muestra, agrupadas por municipio, las localidades del archivo que no tienen coordenadas registradas."""
+        print("\n--Cobertura Geografica: localidades sin coordenadas --")
+        for municipio in self.municipios:
+            sin_coords=municipio.localidades_sin_coordenadas()
+            print(f"\nMunicipio: {municipio.nombre} ({len(sin_coords)} sin coordenadas)")
+            for localidad in sin_coords:
+                print(f" - {localidad.nombre}")
+
 
     def mostrar_promedio_general(self):
-        """Calcula y muestra el promedio de temperatura de todas las localidades consultadas en la
-sesion."""
+        """Calcula y muestra el promedio de temperatura de todas las localidades consultadas en la sesion."""
         if not self.consultas_realizadas:
             print("Aun no se ha consultados el clima de ninguna localidad en esta sesion.")
             return
@@ -246,11 +236,11 @@ sesion."""
         )
 
     def fecha_valida(self,texto):
-        """Verifica que un texto tenga el formato de fecha AAAA-MM-DD.
-Parametros:
-texto (str): texto a validar.
-Retorna:
-bool: True si el texto tiene el formato de fecha correcto."""
+        """Verifica que un texto tenga el formato de fecha AAAA-MM-DD. 
+        Parametros: 
+        texto (str): texto a validar. 
+        Retorna:
+        bool: True si el texto tiene el formato de fecha correcto."""
 
         try:
             datetime.strptime(texto,"%Y-%m-%d")
@@ -259,9 +249,7 @@ bool: True si el texto tiene el formato de fecha correcto."""
             return False
 
     def consultar_historico(self):
-        """Permite al usuario elegir una localidad con coordenadas validas y un rango de
-fechas, y muestra el historico climatico mensual, los promedios del periodo,
-los años destacados y un grafico comparativo de la evolucion anual."""
+        """Permite al usuario elegir una localidad con coordenadas validas y un rango de fechas, y muestra el historico climatico mensual, los promedios del periodo, los años destacados y un grafico comparativo de la evolucion anual."""
         print("\nMunicipios disponibles:")
         for indice,municipio in enumerate(self.municipios,start=1):
             print(f"{indice}.{municipio.nombre}")
@@ -312,10 +300,9 @@ los años destacados y un grafico comparativo de la evolucion anual."""
         graficar_evolucion_anual(registros_mensuales)
 
     def mostrar_promedios_historico(self, registros_mensuales):
-        """Calcula y muestra el promedio de cada magnitud (temperatura, humedad, precipitacion
-y viento) a lo largo del periodo consultado.
-Parametros:
-registros_mensuales (list): lista de objetos RegistroMensual del periodo consultado."""
+        """Calcula y muestra el promedio de cada magnitud (temperatura, humedad, precipitacion y viento) a lo largo del periodo consultado.
+        Parametros:
+        registros_mensuales (list): lista de objetos RegistroMensual del periodo consultado."""
         suma_temp = 0
         suma_humedad = 0
         suma_viento = 0
@@ -336,10 +323,16 @@ registros_mensuales (list): lista de objetos RegistroMensual del periodo consult
         print(f"Velocidad del viento promedio: {suma_viento / cantidad:.2f} km/h")
 
     def mostrar_anios_extremos(self, registros_mensuales):
+<<<<<<< HEAD
         """Agrupa los registros mensuales por año y determina el año mas caluroso, el mas
 fresco, el de mayor precipitacion acumulada y el de mayor humedad relativa.
 Parametros:
 registros_mensuales (list): lista de objetos RegistroMensual del periodo consultado."""
+=======
+        """agrupa los registros mensuales por año y determina el año mas caluroso, fresco, humedo y con mayor precipitacion
+        parametros:
+        lista de objetos RegistroMensual del periodo consultado"""
+>>>>>>> 5f029cc04b4426caa0ed0d2d56f183ec66b6ae95
 
         datos_por_anio = {}
         for registro in registros_mensuales:
