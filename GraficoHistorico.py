@@ -1,6 +1,10 @@
 import matplotlib.pyplot as plt
 
 def graficar_evolucion_anual(registros_mensuales):
+    """genera un grafico con 4 paneles que comparan año por año, la evolucion de la temperatura, humedad, precipitacion y el viento dentro del periodo consultado
+    parametros:
+    lista de objetos RegistroMensual del periodo consultado
+    """
 
     datos_por_anio = {}
 

@@ -4,6 +4,14 @@ from RegistroMensual import RegistroMensual
 
 
 def consultar_historico(latitud, longitud, fecha_inicio, fecha_fin):
+    """consulta la API historica de open-meteo para una coordenada y rango de fechas, y agrupa los resultados diarios en una lista de objetos RegistroMensual, uno por mes.
+    parametros:
+    latitud de la localidad (float)
+    longitud de la localidad (float)
+    fecha de inicio en formato AAAA-MM-DD
+    fecha de fin en formato AAAA-MM-DD
+    
+    devuelve una lista de objetos RegistroMensual ordenados cronologicamente, o None si paso algun tipo de error"""
     url = "https://archive-api.open-meteo.com/v1/archive"
     parametros = {
         "latitude": latitud,
@@ -31,6 +39,11 @@ def consultar_historico(latitud, longitud, fecha_inicio, fecha_fin):
 
 
 def agrupar_por_mes(diario):
+    """agrupa los datos diarios que entrega la API en una lista de objetos RegistroMensual, calcula el promedio mensual de la temperatura, humedad y viento, y la suma mensual de la precipitacion
+    parametros:
+    diccionario "daily" como lo devuelve la APi con listas de fechas y valores
+    
+    devuelve una lista de objetos de RegistroMensual, uno por cada mes presente en los datos ordenados cronologicamente"""
 
     grupos = {}
 

@@ -2,6 +2,12 @@ import requests
 from Clima import Clima
 
 def consultar_clima_actual(latitud, longitud):
+    """consulta la API de open-meteo y obtiene el clima actual para una coordenada dada
+    parametros:
+    latitud de la localidad (float)
+    longitud de la localidad (float)
+    
+    devuelve un objeto con datos meteorologicos actuales o None si ocurrio algun tipo de error"""
 
     url = "https://api.open-meteo.com/v1/forecast"
 

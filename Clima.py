@@ -1,5 +1,6 @@
 
 class Clima:
+    """es el resultado de una conuslta de clima para una localidad en un momento dado"""
 
     codigos_tiempo = {
         0: "Despejado",
@@ -33,6 +34,13 @@ class Clima:
     }
 
     def __init__(self,temperatura, humedad, viento, codigo_tiempo, fecha_hora):
+        """inicia un registro de clima
+        parametros:
+        temperatura actual en grados celsius (float)
+        humedad relativa en porcentaje (float)
+        velocidad del viento en km/h (float)
+        codigo WMO que indica el estado del tiempo (int)
+        fecha y hora de la consulta, como sale en la API"""
         self.temperatura = temperatura
         self.humedad = humedad
         self.viento = viento
@@ -41,10 +49,12 @@ class Clima:
 
 
     def descripcion_tiempo(self):
+        """devuelve en texto el estado del tiempo"""
         return self.codigos_tiempo.get(self.codigo_tiempo, "Desconocido")
 
 
     def show(self):
+        """imprime en la pantalla los datos meteorologicos de este registro"""
         print(f"Fecha y hora de la consulta: {self.fecha_hora}")
         print(f"Temperatura actual: {self.temperatura} C")
         print(f"Humedad relativa: {self.humedad}%")
