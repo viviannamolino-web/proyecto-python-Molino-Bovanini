@@ -336,6 +336,10 @@ registros_mensuales (list): lista de objetos RegistroMensual del periodo consult
         print(f"Velocidad del viento promedio: {suma_viento / cantidad:.2f} km/h")
 
     def mostrar_anios_extremos(self, registros_mensuales):
+        """Agrupa los registros mensuales por año y determina el año mas caluroso, el mas
+fresco, el de mayor precipitacion acumulada y el de mayor humedad relativa.
+Parametros:
+registros_mensuales (list): lista de objetos RegistroMensual del periodo consultado."""
 
         datos_por_anio = {}
         for registro in registros_mensuales:
